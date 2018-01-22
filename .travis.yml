@@ -1,0 +1,26 @@
+language: go
+go:
+- 1.9
+before_install:
+- sudo wget https://github.com/golang/dep/releases/download/v0.3.2/dep-linux-amd64 -O dep
+- sudo chmod +x dep
+install:
+- make install_dependencies
+script:
+- make test
+- make package-darwin
+- make package-linux
+after_success:
+- make cover
+- bash <(curl -s https://codecov.io/bash)
+deploy:
+  provider: releases
+  api_key:
+    secure: TwxVb3DBFf6qwNLcFEyEntdjaZLiMoUYrA6dEMhkKvLNqW4YjrdDdm11SZ4mLB806uT4SABHzP5clI2L/lzIH6Je9CuZPdXhTUvfqqz+rDeKSuf9+NqzNSJLSlHwluwjWlz2wokk2kAhcjvJjt1h5FIoYXhJvf0aB1el4IXnGGvb86wPznwhesaxecv/hLPIzTjQxK0BuIpj2/QZFxlB/ATY1AxN3bjfXqdWmwgj65nTfgHJ8WnkhdL7IK7zNjX5/3BaQvMeQSkMfYs8zjKXU62D9qwYLl+ucrrRTfFMOfYeORMUhWv4Q4FVlLh4YyOS4nldamaIVy42Nx27AJ1UkqWfTVHz1mjlMkmbP9QnQ298SWIUIQIDf9koUg9v451HOvvSN46FV7dENVvH5bveNRQqgNT2PUIFlAzD5IzQGcYd2IUgZgfT8zn30jhTuiaN3qvqdsxAJqYxhfrv9eDnDxKVe13GXXgDH7+Hk0iD4Y9KHOr60RCJoy4N2w++FN96iVhA7mccZf2k4gMbjU5xb5layVrjQPgynN/xQGeGyeKeP1UMdHr1G0KEkwUuiKPcuaXpxwlGfPX2dzFth2KMJXQBMYNa+EgNYa6H26swisD24FZ4lV/N1YH5ZSoBAf/FZBG96ntBQZZQY71eqJ6hb3r0SMfOsiWIe+K2+tQix4w=
+  file:
+    - "build/dist/gitflow-release.darwin-amd64.tar.gz"
+    - "build/dist/gitflow-release.linux-amd64.tar.gz"
+  skip_cleanup: true
+  on:
+    repo: chentex/gitflow-release
+    tags: true
