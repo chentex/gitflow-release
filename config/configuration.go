@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Params parameters to initialize configuration
+//Params parameters to initialize configuration
 type Params struct {
 	Force          string
 	CfgFile        string
@@ -16,21 +16,21 @@ type Params struct {
 	InitialVersion string
 }
 
-// Configure defines how to manage configuration
+//Configure defines how to manage configuration
 type Configure interface {
 	InitConfig(p Params) error
 }
 
-// NewConfigure returns a new instance of a configure
+//NewConfigure returns a new instance of a configure
 func NewConfigure() Configure {
 	return &Configurator{}
 }
 
-// Configurator implementation of a Configure
+//Configurator implementation of a Configure
 type Configurator struct {
 }
 
-// InitConfig initializes the configuration
+//InitConfig initializes the configuration
 func (c *Configurator) InitConfig(p Params) error {
 	// Validate if repository already initialized
 	fileManager := fm.NewFileManager()
