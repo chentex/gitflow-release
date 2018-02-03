@@ -15,12 +15,7 @@
 package cmd
 
 import (
-	"fmt"
-	"io/ioutil"
-	"strconv"
-
-	"github.com/pkg/errors"
-
+	"github.com/chentex/gitflow-release/config"
 	"github.com/spf13/cobra"
 )
 
@@ -38,25 +33,10 @@ var initCmd = &cobra.Command{
 VERSION (default name, with the current version of the project.)
 .gitflow-release (with the configuration for this project.)`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Validate if repo already initialized
-		force, err := strconv.ParseBool(cmd.Flag("force").Value.String())
+		c := config.NewConfigure()
+		err := c.InitConfig(config.Params{Force: cmd.Flag("force").Value.String(), CfgFile: cfgFile, InitialVersion: initialVersion, VersionFile: versionFile})
 		if err != nil {
-			return errors.Wrapf(err, "Error parsing flag.")
-		}
-
-		if _, err = ioutil.ReadFile(versionFile); err == nil && !force {
-			return errors.Errorf("Repository already initialized with version file: %s", versionFile)
-		}
-
-		yaml := fmt.Sprintf(`versionfile: %s`, versionFile)
-		err = ioutil.WriteFile(cfgFile, []byte(yaml), 0644)
-		if err != nil {
-			return errors.Wrapf(err, "Creating configuration file: %s", cfgFile)
-		}
-
-		err = ioutil.WriteFile(versionFile, []byte(initialVersion), 0644)
-		if err != nil {
-			return errors.Wrapf(err, "Creating version file: %s", versionFile)
+			return err
 		}
 		return nil
 	},

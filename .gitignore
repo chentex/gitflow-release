@@ -16,3 +16,4 @@ gitflow-release
 # Vendor related
 vendor
 Gopkg.lock
+.vscode
