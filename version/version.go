@@ -32,11 +32,11 @@ type Manager struct {
 //BumpVersion modifies the file with the bumped version
 //Examples:
 //File contains: 0.1.0
-//major bump will result in file containing: 1.1.0
+//major bump will result in file containing: 1.0.0
 //minor bump will result in file containing: 0.2.0
 //patch bump will result in file containing: 0.1.1
-//sending alpha true bump will result in file containing: 0.1.1-alpha
-//sending beta true bump will result in file containing: 0.1.1-beta
+//sending alpha true bump will result in file containing: 0.1.0-alpha
+//sending beta true bump will result in file containing: 0.1.0-beta
 //alpha and beta cannot be sent both true
 func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, beta bool) error {
 	if alpha && beta {
