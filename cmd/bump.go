@@ -59,10 +59,11 @@ You can combine any (major, minor or patch) with (alpha or beta).`,
 		if err != nil {
 			return errors.Wrap(err, "while getting bump type flag")
 		}
-		err = versionManager.BumpVersion(vFile, bump, alpha, beta)
+		ver, err := versionManager.BumpVersion(vFile, bump, alpha, beta)
 		if err != nil {
 			return errors.Wrap(err, "while bumping version")
 		}
+		fmt.Printf("version: %s", ver)
 		//TODO git actions
 		return nil
 	},

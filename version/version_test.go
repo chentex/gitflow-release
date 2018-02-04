@@ -67,18 +67,14 @@ func TestManager_BumpVersion(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &Manager{}
-			if err := m.BumpVersion(tt.args.versionFile, tt.args.bumpType, tt.args.alpha, tt.args.beta); (err != nil) != tt.wantErr {
+			version, err := m.BumpVersion(tt.args.versionFile, tt.args.bumpType, tt.args.alpha, tt.args.beta)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Manager.BumpVersion() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if !tt.wantErr {
-				version, err := f.OpenFile(tt.args.versionFile)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if tt.wantVersion != version {
-					t.Errorf("Manager.BumpVersion() version = %v, wantVersion %v", version, tt.wantVersion)
-				}
+			if !tt.wantErr && tt.wantVersion != version {
+				t.Errorf("Manager.BumpVersion() version = %v, wantVersion %v", version, tt.wantVersion)
 			}
+
 		})
 	}
 	err := f.WriteFile(vFile, []byte("0.1.0"), 0644)

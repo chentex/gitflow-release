@@ -11,7 +11,7 @@ import (
 
 //Versioner defines what a version control should do
 type Versioner interface {
-	BumpVersion(versionFile string, bumpType string, alpha bool, beta bool) error
+	BumpVersion(versionFile string, bumpType string, alpha bool, beta bool) (string, error)
 }
 
 const (
@@ -38,14 +38,14 @@ type Manager struct {
 //sending alpha true bump will result in file containing: 0.1.0-alpha
 //sending beta true bump will result in file containing: 0.1.0-beta
 //alpha and beta cannot be sent both true
-func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, beta bool) error {
+func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, beta bool) (string, error) {
 	if alpha && beta {
-		return errors.New("Cannot have both alpha and beta")
+		return "", errors.New("Cannot have both alpha and beta")
 	}
 	f := fm.NewFileManager()
 	content, err := f.OpenFile(versionFile)
 	if err != nil {
-		return errors.Wrap(err, "while opening version file")
+		return "", errors.Wrap(err, "while opening version file")
 	}
 	re := regexp.MustCompile("^([0-9]+).([0-9]+).([0-9]+)(.+)?")
 	matches := re.FindStringSubmatch(content)
@@ -55,7 +55,7 @@ func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, b
 	case majorBump:
 		major, err := strconv.Atoi(matches[1])
 		if err != nil {
-			return errors.Wrap(err, "while parsing major version")
+			return "", errors.Wrap(err, "while parsing major version")
 		}
 		major++
 		version = fmt.Sprintf("%d.0.0", major)
@@ -63,7 +63,7 @@ func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, b
 	case minorBump:
 		minor, err := strconv.Atoi(matches[2])
 		if err != nil {
-			return errors.Wrap(err, "while parsing minor version")
+			return "", errors.Wrap(err, "while parsing minor version")
 		}
 		minor++
 		version = fmt.Sprintf("%s.%d.0", matches[1], minor)
@@ -71,13 +71,13 @@ func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, b
 	case patchBump:
 		patch, err := strconv.Atoi(matches[3])
 		if err != nil {
-			return errors.Wrap(err, "while parsing patch version")
+			return "", errors.Wrap(err, "while parsing patch version")
 		}
 		patch++
 		version = fmt.Sprintf("%s.%s.%d", matches[1], matches[2], patch)
 		break
 	default:
-		return errors.New("Incorrect bump type")
+		return "", errors.New("Incorrect bump type")
 	}
 
 	if alpha {
@@ -89,5 +89,5 @@ func (m *Manager) BumpVersion(versionFile string, bumpType string, alpha bool, b
 	}
 
 	f.WriteFile(versionFile, []byte(version), 0644)
-	return nil
+	return version, nil
 }
